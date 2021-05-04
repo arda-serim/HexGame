@@ -1,23 +1,24 @@
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class TileMapGenerator : MonoBehaviour
 {
-    [SerializeField] int width;
-    [SerializeField] int height;
+    int width;
+    int height;
 
     [SerializeField] GameObject tileGO;
     [SerializeField] GameObject tilesGO;
-    Tile[,] tiles = new Tile[20, 20];
-    //Dictionary<Vector2, GameObject> tiles = new Dictionary<Vector2, GameObject>();
 
     void Start()
     {
-        StartCoroutine(Method());
+        width = GameManager.Instance.width;
+        height = GameManager.Instance.height;
+        StartCoroutine(GenerateMap());
     }
 
-    IEnumerator Method()
+    IEnumerator GenerateMap()
     {
         for (int col = 0; col < width; col++)
         {
@@ -27,30 +28,18 @@ public class TileMapGenerator : MonoBehaviour
 
                 GameObject go = Instantiate(tileGO, pos, Quaternion.identity);
                 Tile tempTile = go.GetComponent<Tile>();
+
+                //Assigning Cordinates
                 tempTile.col = col;
                 tempTile.row = row;
+                Vector3 tempVec = OffsetToCubeConversion(col, row);
+                tempTile.x = (int)tempVec.x;
+                tempTile.y = (int)tempVec.y;
+                tempTile.z = (int)tempVec.z;
+
                 go.name = $"Tile ({col}, {row})";
                 go.transform.SetParent(tilesGO.transform);
-                tiles[col, row] = tempTile;
-
-                if ((row & 1) == 0 && row != 0 && col != 0)
-                {
-                    tempTile.neighbours[0] = tiles[col, row + 1];
-                    tempTile.neighbours[1] = tiles[col - 1, row + 1];
-                    tempTile.neighbours[2] = tiles[col - 1, row];
-                    tempTile.neighbours[3] = tiles[col - 1, row - 1];
-                    tempTile.neighbours[4] = tiles[col, row - 1];
-                    tempTile.neighbours[5] = tiles[col + 1, row];
-                }
-                else
-                {
-                    tempTile.neighbours[0] = tiles[col + 1, row + 1];
-                    tempTile.neighbours[1] = tiles[col, row + 1];
-                    tempTile.neighbours[2] = tiles[col - 1, row];
-                    tempTile.neighbours[3] = tiles[col, row - 1];
-                    tempTile.neighbours[4] = tiles[col + 1, row - 1];
-                    tempTile.neighbours[5] = tiles[col + 1, row];
-                }
+                GameManager.Instance.tiles[col, row] = tempTile;
 
                 if (col == 10 & row == 10)
                 {
@@ -59,6 +48,52 @@ public class TileMapGenerator : MonoBehaviour
                 yield return null;
             }
         }
+        for (int col = 0; col < width; col++)
+        {
+            for (int row = 0; row < height; row++)
+            {
+                Tile tempTile = GameManager.Instance.tiles[col, row];
+                if ((row & 1) == 0)
+                {
+                    if (row + 1 >= 0 && row + 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col, row + 1]);
+                    if (col - 1 >= 0 && col - 1 < width && row + 1 >= 0 && row + 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row + 1]);
+                    if (col - 1 >= 0 && col - 1 < width)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row]);
+                    if (col - 1 >= 0 && col - 1 < width && row - 1 >= 0 && row - 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row - 1]);
+                    if (row - 1 >= 0 && row - 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col, row - 1]);
+                    if (col + 1 >= 0 && col + 1 < width)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col + 1, row]);
+                }
+                else
+                {
+                    if (col + 1 >= 0 && col + 1 < width && row + 1 >= 0 && row + 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col + 1, row + 1]);
+                    if (row + 1 >= 0 && row + 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col, row + 1]);
+                    if (col - 1 >= 0 && col - 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row]);
+                    if (row - 1 >= 0 && row - 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col, row - 1]);
+                    if (col + 1 >= 0 && col + 1 < width && row - 1 >= 0 && row - 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col + 1, row - 1]);
+                    if (col + 1 >= 0 && col + 1 < width)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col + 1, row]);
+                }
+            }
+        }
         Destroy(gameObject);
+    }
+
+    public Vector3 OffsetToCubeConversion(int col, int row)
+    {
+        var x = col - (row + (row & 1)) / 2;
+        var z = row;
+        var y = -x - z;
+
+        return new Vector3(x, y, z);
     }
 }
