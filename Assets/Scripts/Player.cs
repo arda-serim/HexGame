@@ -6,17 +6,20 @@ public class Player : MonoBehaviour
 {
     Unit.Teams playerTeam;
 
-    Camera camera;
+    [SerializeField]GameObject attackingDisplay;
 
     public Tile tileOnMouseOver;
 
     void Awake()
     {
-        camera = GameObject.Find("Main Camera").GetComponent<Camera>();   
+        playerTeam = Unit.Teams.Red;
     }
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Mouse1))
+        {
 
+        }
     }
 }

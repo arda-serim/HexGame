@@ -55,6 +55,78 @@ public class Tile : MonoBehaviour
         return tempList;
     }
 
+    public List<Tile> Pathfind(Tile to)
+    {
+        Dictionary<Tile, float> dist = new Dictionary<Tile, float>();
+        Dictionary<Tile, Tile> prev = new Dictionary<Tile, Tile>();
+
+        List<Tile> unvisited = new List<Tile>();
+
+        dist[this] = 0;
+        prev[this] = null;
+
+        foreach (Tile v in GameManager.Instance.tiles)
+        {
+            if (v != this)
+            {
+                dist[v] = Mathf.Infinity;
+                prev[v] = null;
+            }
+
+            unvisited.Add(v);
+        }
+
+        while (unvisited.Count > 0)
+        {
+            Tile u = null;
+
+            foreach (var possibleU in unvisited)
+            {
+                if (u == null || dist[possibleU] < dist[u])
+                {
+                    u = possibleU;
+                }
+            }
+
+            //Reach the target so break the while loop
+            if (u == to)
+            {
+                break;
+            }
+
+            unvisited.Remove(u);
+
+            foreach (var v in u.neighbours)
+            {
+                float alt = dist[u] + u.DistanceTo(v);
+
+                if (alt < dist[v])
+                {
+                    dist[v] = alt;
+                    prev[v] = u;
+                }
+            }
+        }
+
+        Tile tempCur = to;
+        List<Tile> tempPath = new List<Tile>();
+
+        while (tempCur != null)
+        {
+            tempPath.Add(tempCur);
+            tempCur = prev[tempCur];
+        }
+
+        if (prev[to] != null)
+        {
+            tempPath.Remove(this);
+            tempPath.Reverse();
+            return tempPath;
+        }
+
+        return null;
+    }
+
     void OnMouseEnter()
     {
         player.tileOnMouseOver = this;
@@ -62,11 +134,9 @@ public class Tile : MonoBehaviour
 
     void OnMouseOver()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
 
-        }
     }
+
 
     void OnMouseExit()
     {
@@ -83,9 +153,9 @@ public struct Unit
     public enum UnitTypes
     {
         Empty,
-        Swordsman,
+        Warrior,
         Archer,
-        Horseman,
+        Knight,
         Assassin,
         Castle,
         Barrack,
@@ -104,8 +174,6 @@ public struct Unit
     public UnitTypes type;
 
     public Teams team;
-
-    public GameObject uiGO;
 
     public int size;
 }

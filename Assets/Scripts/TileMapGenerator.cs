@@ -8,7 +8,7 @@ public class TileMapGenerator : MonoBehaviour
     int width;
     int height;
 
-    [SerializeField] GameObject tileGO;
+    [SerializeField] GameObject realtileGO;
     [SerializeField] GameObject tilesGO;
 
     void Start()
@@ -20,13 +20,14 @@ public class TileMapGenerator : MonoBehaviour
 
     IEnumerator GenerateMap()
     {
+        //Generate interactable tiles
         for (int col = 0; col < width; col++)
         {
             for (int row = 0; row < height; row++)
             {
                 Vector3 pos = new Vector3(0.5f * Mathf.Sqrt(3) * (col - 0.5f * (row & 1)), 0.5f * 3 / 2 * row);
 
-                GameObject go = Instantiate(tileGO, pos, Quaternion.identity);
+                GameObject go = Instantiate(realtileGO, pos, Quaternion.identity);
                 Tile tempTile = go.GetComponent<Tile>();
 
                 //Assigning Cordinates
@@ -41,13 +42,11 @@ public class TileMapGenerator : MonoBehaviour
                 go.transform.SetParent(tilesGO.transform);
                 GameManager.Instance.tiles[col, row] = tempTile;
 
-                if (col == 10 & row == 10)
-                {
-                    go.GetComponent<SpriteRenderer>().color = Color.blue;
-                }
                 yield return null;
             }
         }
+
+        //Adds neigbours to the real tiles
         for (int col = 0; col < width; col++)
         {
             for (int row = 0; row < height; row++)
@@ -55,26 +54,11 @@ public class TileMapGenerator : MonoBehaviour
                 Tile tempTile = GameManager.Instance.tiles[col, row];
                 if ((row & 1) == 0)
                 {
-                    if (row + 1 >= 0 && row + 1 < height)
-                        tempTile.neighbours.Add(GameManager.Instance.tiles[col, row + 1]);
-                    if (col - 1 >= 0 && col - 1 < width && row + 1 >= 0 && row + 1 < height)
-                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row + 1]);
-                    if (col - 1 >= 0 && col - 1 < width)
-                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row]);
-                    if (col - 1 >= 0 && col - 1 < width && row - 1 >= 0 && row - 1 < height)
-                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row - 1]);
-                    if (row - 1 >= 0 && row - 1 < height)
-                        tempTile.neighbours.Add(GameManager.Instance.tiles[col, row - 1]);
-                    if (col + 1 >= 0 && col + 1 < width)
-                        tempTile.neighbours.Add(GameManager.Instance.tiles[col + 1, row]);
-                }
-                else
-                {
-                    if (col + 1 >= 0 && col + 1 < width && row + 1 >= 0 && row + 1 < height)
+                    if (col +  1 >= 0 && col + 1 < width && row + 1 >= 0 && row + 1 < height)
                         tempTile.neighbours.Add(GameManager.Instance.tiles[col + 1, row + 1]);
                     if (row + 1 >= 0 && row + 1 < height)
                         tempTile.neighbours.Add(GameManager.Instance.tiles[col, row + 1]);
-                    if (col - 1 >= 0 && col - 1 < height)
+                    if (col - 1 >= 0 && col - 1 < width)
                         tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row]);
                     if (row - 1 >= 0 && row - 1 < height)
                         tempTile.neighbours.Add(GameManager.Instance.tiles[col, row - 1]);
@@ -83,8 +67,25 @@ public class TileMapGenerator : MonoBehaviour
                     if (col + 1 >= 0 && col + 1 < width)
                         tempTile.neighbours.Add(GameManager.Instance.tiles[col + 1, row]);
                 }
+                else
+                {
+                    if (row + 1 >= 0 && row + 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col, row + 1]);
+                    if (col - 1 >= 0 && col - 1 < width && row + 1 >= 0 && row + 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row + 1]);
+                    if (col - 1 >= 0 && col - 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row]);
+                    if (col - 1 >= 0 && col - 1 < width && row - 1 >= 0 && row - 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col - 1, row - 1]);
+                    if (row - 1 >= 0 && row - 1 < height)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col, row - 1]);
+                    if (col + 1 >= 0 && col + 1 < width)
+                        tempTile.neighbours.Add(GameManager.Instance.tiles[col + 1, row]);
+                }
             }
         }
+
+        GameManager.Instance.StartGame();
         Destroy(gameObject);
     }
 

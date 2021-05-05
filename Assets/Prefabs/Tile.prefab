@@ -105,7 +105,7 @@ Rigidbody2D:
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 0
-  m_Constraints: 7
+  m_Constraints: 0
 --- !u!61 &2801886469936107236
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -144,5 +144,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95fae54b8be33ae41857af584b83f2e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  temp: {fileID: 0}
+  col: 0
+  row: 0
   x: 0
   y: 0
+  z: 0
+  unit:
+    type: 0
+    team: 0
+    uiGO: {fileID: 0}
+    size: 0
+  neighbours: []
