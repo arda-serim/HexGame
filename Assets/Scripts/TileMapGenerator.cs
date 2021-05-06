@@ -9,7 +9,7 @@ public class TileMapGenerator : MonoBehaviour
     int height;
 
     [SerializeField] GameObject realtileGO;
-    [SerializeField] GameObject tilesGO;
+    [SerializeField] GameObject tilesContainer;
 
     void Start()
     {
@@ -39,9 +39,8 @@ public class TileMapGenerator : MonoBehaviour
                 tempTile.z = (int)tempVec.z;
 
                 go.name = $"Tile ({col}, {row})";
-                go.transform.SetParent(tilesGO.transform);
+                go.transform.SetParent(tilesContainer.transform);
                 GameManager.Instance.tiles[col, row] = tempTile;
-
                 yield return null;
             }
         }

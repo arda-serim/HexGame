@@ -23,10 +23,14 @@ public class GameManager : MonoBehaviour
 
     #endregion
 
+    public Unit.Teams whosTurn;
+    public bool canMove;
+
     public Tile[,] tiles;
-    public Dictionary<Tile, GameObject> displayTiles = new Dictionary<Tile, GameObject>();
+    public Dictionary<Tile, AttackingUnitDisplay> displayTiles = new Dictionary<Tile, AttackingUnitDisplay>();
 
     [SerializeField] GameObject attackingDisplay;
+    [SerializeField] GameObject displayTilesContainer;
 
     public int width;
     public int height;
@@ -36,13 +40,62 @@ public class GameManager : MonoBehaviour
     /// </summary>
     public void StartGame()
     {
+        whosTurn = Unit.Teams.Red;
+        canMove = true;
+
         Unit tempUnit = new Unit();
 
+        #region Castles
         tempUnit.team = Unit.Teams.Red;
-        tempUnit.type = Unit.UnitTypes.Castle;
+        tempUnit.type = Unit.Types.Castle;
         tempUnit.size = 20;
-        tiles[10, 10].unit = tempUnit;
-        CreateDisplay(tiles[10, 10], tempUnit);
+        tiles[5, 13].unit = tempUnit;
+        CreateDisplay(tiles[5, 13], tempUnit);
+        
+        tempUnit.team = Unit.Teams.Blue;
+        tempUnit.type = Unit.Types.Castle;
+        tempUnit.size = 20;
+        tiles[5, 7].unit = tempUnit;
+        CreateDisplay(tiles[5, 7], tempUnit);        
+        
+        tempUnit.team = Unit.Teams.Green;
+        tempUnit.type = Unit.Types.Castle;
+        tempUnit.size = 20;
+        tiles[16, 13].unit = tempUnit;
+        CreateDisplay(tiles[16, 13], tempUnit);        
+        
+        tempUnit.team = Unit.Teams.Yellow;
+        tempUnit.type = Unit.Types.Castle;
+        tempUnit.size = 20;
+        tiles[16, 7].unit = tempUnit;
+        CreateDisplay(tiles[16, 7], tempUnit);
+        #endregion
+
+        #region Warriors
+        tempUnit.team = Unit.Teams.Red;
+        tempUnit.type = Unit.Types.Warrior;
+        tempUnit.size = 20;
+        tiles[6, 13].unit = tempUnit;
+        CreateDisplay(tiles[6, 13], tempUnit);
+        
+        tempUnit.team = Unit.Teams.Blue;
+        tempUnit.type = Unit.Types.Warrior;
+        tempUnit.size = 20;
+        tiles[6, 7].unit = tempUnit;
+        CreateDisplay(tiles[6, 7], tempUnit);        
+        
+        tempUnit.team = Unit.Teams.Green;
+        tempUnit.type = Unit.Types.Warrior;
+        tempUnit.size = 20;
+        tiles[15, 13].unit = tempUnit;
+        CreateDisplay(tiles[15, 13], tempUnit);        
+        
+        tempUnit.team = Unit.Teams.Yellow;
+        tempUnit.type = Unit.Types.Warrior;
+        tempUnit.size = 20;
+        tiles[15, 7].unit = tempUnit;
+        CreateDisplay(tiles[15, 7], tempUnit);
+        #endregion
     }
 
     /// <summary>
@@ -55,10 +108,24 @@ public class GameManager : MonoBehaviour
         GameObject go = Instantiate(attackingDisplay);
 
         go.transform.position = tile.gameObject.transform.position;
-        go.GetComponent<AttackingUnitDisplay>().team = unit.team;
-        go.GetComponent<AttackingUnitDisplay>().type = unit.type;
-        go.GetComponent<AttackingUnitDisplay>().size = unit.size;
+        go.GetComponent<AttackingUnitDisplay>().unit.team = unit.team;
+        go.GetComponent<AttackingUnitDisplay>().unit.type = unit.type;
+        go.GetComponent<AttackingUnitDisplay>().unit.size = unit.size;
+        go.transform.SetParent(displayTilesContainer.transform);
 
-        displayTiles.Add(tile, go);
+        displayTiles.Add(tile, go.GetComponent<AttackingUnitDisplay>());
+    }
+
+    public void NextTurn()
+    {
+        if (whosTurn.GetHashCode() < 4)
+        {
+            whosTurn = (Unit.Teams)whosTurn.GetHashCode() + 1;
+        }
+        else
+        {
+            whosTurn = (Unit.Teams)1;
+        }
+        canMove = true;
     }
 }

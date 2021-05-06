@@ -4,22 +4,56 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    Unit.Teams playerTeam;
-
-    [SerializeField]GameObject attackingDisplay;
+   public Unit.Teams team;
 
     public Tile tileOnMouseOver;
+    public Tile selectedTile;
 
     void Awake()
     {
-        playerTeam = Unit.Teams.Red;
+        team = Unit.Teams.Red;
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Mouse1))
-        {
+        if (GameManager.Instance.canMove && GameManager.Instance.whosTurn != team)
+            return;
 
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+        {
+            if (selectedTile == null)
+            {
+                if (team == tileOnMouseOver.unit.team)
+                {
+                    selectedTile = tileOnMouseOver;
+                }
+            }
+            else
+            {
+                if (team == tileOnMouseOver.unit.team)
+                {
+                    selectedTile = tileOnMouseOver;
+                }
+                else if (selectedTile.Pathfind(tileOnMouseOver).Count <= 2)
+                {
+                    if (tileOnMouseOver.unit.type == Unit.Types.Empty)
+                    {
+                        Debug.Log("Found a tile can be gone, sir");
+                        StartCoroutine(selectedTile.GoTo(tileOnMouseOver));
+                    }
+                    else if (team != tileOnMouseOver.unit.team && tileOnMouseOver.unit.team != Unit.Teams.Universal)
+                    {
+                        if (tileOnMouseOver.unit.type == Unit.Types.Castle)
+                        {
+                            Debug.Log("Found a Enemy Castle, sir");
+                        }
+                        else
+                        {
+                            Debug.Log("Found a Enemy attacker, sir");
+                        }
+                    }
+                }
+            }
         }
     }
 }
