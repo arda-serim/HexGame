@@ -8,7 +8,7 @@ public class DumbestAI : MonoBehaviour
 
     void Start()
     {
-        
+        GameManager.Instance.teamsOnGame.Add(team);
     }
 
     void Update()
@@ -19,6 +19,9 @@ public class DumbestAI : MonoBehaviour
         }   
     }
 
+    /// <summary>
+    /// Makes the stupidest things for now(?!??)
+    /// </summary>
     void DoMostStupidThingTheWorldHaveEverSeen()
     {
         List<Tile> tempList = new List<Tile>();
@@ -30,6 +33,8 @@ public class DumbestAI : MonoBehaviour
             }
         }
 
-        StartCoroutine(tempList[0].GoTo(tempList[0].Range(2)[Random.Range(0, tempList[0].Range(2).Count - 1)]));
+        var tempRangeList = tempList[0].RangeWithEmpty(2);
+
+        StartCoroutine(tempList[0].GoTo(tempRangeList[Random.Range(0, tempRangeList.Count - 1)]));
     }
 }

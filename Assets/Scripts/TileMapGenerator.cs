@@ -18,6 +18,10 @@ public class TileMapGenerator : MonoBehaviour
         StartCoroutine(GenerateMap());
     }
 
+    /// <summary>
+    /// Generate map for interactable tiles (one-time use only)
+    /// </summary>
+    /// <returns></returns>
     IEnumerator GenerateMap()
     {
         //Generate interactable tiles
@@ -40,6 +44,7 @@ public class TileMapGenerator : MonoBehaviour
 
                 go.name = $"Tile ({col}, {row})";
                 go.transform.SetParent(tilesContainer.transform);
+                go.isStatic = true;
                 GameManager.Instance.tiles[col, row] = tempTile;
                 yield return null;
             }
@@ -88,6 +93,12 @@ public class TileMapGenerator : MonoBehaviour
         Destroy(gameObject);
     }
 
+    /// <summary>
+    /// Changes r-odd pointy tile coordinates to hexagon cube coordinates
+    /// </summary>
+    /// <param name="col"></param>
+    /// <param name="row"></param>
+    /// <returns></returns>
     public Vector3 OffsetToCubeConversion(int col, int row)
     {
         var x = col - (row + (row & 1)) / 2;

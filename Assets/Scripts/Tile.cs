@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
@@ -42,18 +43,43 @@ public class Tile : MonoBehaviour
     {
         List<Tile> tempList = new List<Tile>();
 
-        foreach (var item in GameManager.Instance.tiles)
+        foreach (var tile in GameManager.Instance.tiles)
         {
-            if ((item.col != col || item.row != row))
+            if (tile.col != col || tile.row != row && Pathfind(tile).Count <= range)
             {
-                if (item.DistanceTo(this) <= range)
+                if (tile.DistanceTo(this) <= range)
                 {
-                    tempList.Add(item);
+                    tempList.Add(tile);
                 }
             }
         }
 
         return tempList;
+    }
+
+    public List<Tile> RangeWithEmpty(int range)
+    {
+        List<Tile> tempList = new List<Tile>();
+        List<Tile> realTempList = new List<Tile>();
+
+        foreach (var tile in GameManager.Instance.tiles)
+        {
+            if ((tile.col != col || tile.row != row) && tile.unit.type == Unit.Types.Empty)
+            {
+                if (tile.DistanceTo(this) <= range)
+                {
+                    tempList.Add(tile);
+                }
+            }
+        }
+        foreach (var tile in tempList)
+        {
+            if (Pathfind(tile).Count <= range)
+            {
+                realTempList.Add(tile);
+            }
+        }
+        return realTempList;
     }
 
     /// <summary>
@@ -184,6 +210,10 @@ public class Tile : MonoBehaviour
     void OnMouseEnter()
     {
         player.tileOnMouseOver = this;
+        if (player.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
+        {
+            GameManager.Instance.CreateHighlightTile(this);
+        }
     }
 
     void OnMouseOver()
@@ -191,13 +221,14 @@ public class Tile : MonoBehaviour
         
     }
 
-
     void OnMouseExit()
     {
-        //Mouse is exited this tile
-        //probably de-assign to the "Player" script for onOverTile(?) value
-
         player.tileOnMouseOver = null;
+
+        if (player.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
+        {
+            GameManager.Instance.RemoveHighlightTile(this);
+        }
     }
 }
 

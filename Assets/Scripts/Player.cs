@@ -4,19 +4,24 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-   public Unit.Teams team;
+    public Unit.Teams team;
+
+    Camera myCamera;
 
     public Tile tileOnMouseOver;
     public Tile selectedTile;
 
-    void Awake()
+    void Start()
     {
+        myCamera = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Camera>();
+
         team = Unit.Teams.Red;
+        GameManager.Instance.teamsOnGame.Add(team);
     }
 
     void Update()
     {
-        if (GameManager.Instance.canMove && GameManager.Instance.whosTurn != team)
+        if (!GameManager.Instance.canMove || GameManager.Instance.whosTurn != team)
             return;
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
@@ -26,6 +31,7 @@ public class Player : MonoBehaviour
                 if (team == tileOnMouseOver.unit.team)
                 {
                     selectedTile = tileOnMouseOver;
+                    GameManager.Instance.CreateHighlightTile(selectedTile.RangeWithEmpty(2));
                 }
             }
             else
@@ -36,6 +42,7 @@ public class Player : MonoBehaviour
                 }
                 else if (selectedTile.Pathfind(tileOnMouseOver).Count <= 2)
                 {
+                    GameManager.Instance.RemoveHighlightTile();
                     if (tileOnMouseOver.unit.type == Unit.Types.Empty)
                     {
                         Debug.Log("Found a tile can be gone, sir");

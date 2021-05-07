@@ -11,8 +11,8 @@ GameObject:
   - component: {fileID: 1437372308213521605}
   - component: {fileID: 1437372308213521604}
   - component: {fileID: 5351739402262429427}
-  - component: {fileID: 2801886469936107236}
   - component: {fileID: 1437372308213521603}
+  - component: {fileID: 3417951545728196240}
   m_Layer: 0
   m_Name: Tile
   m_TagString: Untagged
@@ -106,8 +106,30 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!61 &2801886469936107236
-BoxCollider2D:
+--- !u!114 &1437372308213521603
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1437372308213521602}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 95fae54b8be33ae41857af584b83f2e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  col: 0
+  row: 0
+  x: 0
+  y: 0
+  z: 0
+  unit:
+    type: 0
+    team: 0
+    size: 0
+  neighbours: []
+--- !u!60 &3417951545728196240
+PolygonCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -129,30 +151,11 @@ BoxCollider2D:
     drawMode: 0
     adaptiveTiling: 0
   m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 0.5286386, y: 0.5286386}
-  m_EdgeRadius: 0
---- !u!114 &1437372308213521603
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1437372308213521602}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 95fae54b8be33ae41857af584b83f2e0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  temp: {fileID: 0}
-  col: 0
-  row: 0
-  x: 0
-  y: 0
-  z: 0
-  unit:
-    type: 0
-    team: 0
-    uiGO: {fileID: 0}
-    size: 0
-  neighbours: []
+  m_Points:
+    m_Paths:
+    - - {x: 0.43, y: -0.25}
+      - {x: 0.43, y: 0.25}
+      - {x: 0, y: 0.5}
+      - {x: -0.43, y: 0.25}
+      - {x: -0.43, y: -0.25}
+      - {x: 0, y: -0.5}
