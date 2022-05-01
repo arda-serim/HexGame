@@ -210,7 +210,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 3
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -234,7 +234,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 519420028}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 8.65, y: 7.5, z: -10}
+  m_LocalPosition: {x: 13.2, y: 6.5, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -252,7 +252,7 @@ GameObject:
   - component: {fileID: 797088979}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -269,7 +269,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b097cbc18f372541bf74ae0ce3e94b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  team: 0
+  team: 1
   tileOnMouseOver: {fileID: 0}
   selectedTile: {fileID: 0}
 --- !u!4 &797088980
@@ -297,8 +297,8 @@ GameObject:
   - component: {fileID: 1019158086}
   - component: {fileID: 1019158085}
   m_Layer: 0
-  m_Name: DumbestAI (2)
-  m_TagString: Untagged
+  m_Name: Player4
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -312,10 +312,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1019158084}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97fa9bcd17ab169438111606fd5506f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b097cbc18f372541bf74ae0ce3e94b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   team: 4
+  tileOnMouseOver: {fileID: 0}
+  selectedTile: {fileID: 0}
 --- !u!4 &1019158086
 Transform:
   m_ObjectHideFlags: 0
@@ -386,8 +388,8 @@ GameObject:
   - component: {fileID: 1113914050}
   - component: {fileID: 1113914049}
   m_Layer: 0
-  m_Name: DumbestAI (1)
-  m_TagString: Untagged
+  m_Name: Player3
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -401,10 +403,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1113914048}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97fa9bcd17ab169438111606fd5506f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b097cbc18f372541bf74ae0ce3e94b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   team: 3
+  tileOnMouseOver: {fileID: 0}
+  selectedTile: {fileID: 0}
 --- !u!4 &1113914050
 Transform:
   m_ObjectHideFlags: 0
@@ -470,8 +474,8 @@ MonoBehaviour:
   displayTilesContainer: {fileID: 1588679697}
   highlightTile: {fileID: 6771125936081192139, guid: 233dfef7241a54b4ebf61612e18267c2, type: 3}
   highlightTilesContainer: {fileID: 1948058862}
-  width: 20
-  height: 20
+  width: 32
+  height: 18
 --- !u!1 &1534019107
 GameObject:
   m_ObjectHideFlags: 0
@@ -607,8 +611,8 @@ GameObject:
   - component: {fileID: 2134954371}
   - component: {fileID: 2134954370}
   m_Layer: 0
-  m_Name: 'DumbestAI '
-  m_TagString: Untagged
+  m_Name: Player2
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -622,10 +626,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2134954369}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 97fa9bcd17ab169438111606fd5506f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 4b097cbc18f372541bf74ae0ce3e94b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   team: 2
+  tileOnMouseOver: {fileID: 0}
+  selectedTile: {fileID: 0}
 --- !u!4 &2134954371
 Transform:
   m_ObjectHideFlags: 0
