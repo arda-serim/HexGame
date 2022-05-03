@@ -1,0 +1,5 @@
+1) menzil yetiyorsa uzaktan vurmak için vurup en yakına gelsin
+2) attack range gösterilsin, vurabildiği düşmanlar highlightlensin
+3) yerleştirme roundu yerine kaleye tıklayıp yerleştirilsin
+4) player number should be changed
+5) tile highlight hatalarını düzelt, yeşilde hata ve üstüne geldiğinde highlightlar gidiyor

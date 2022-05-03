@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
@@ -19,14 +20,24 @@ public class GameManager : MonoBehaviour
    {
       _instance = this;
       tiles = new Tile[width, height];
+
+      masterTurn = 1;
+
    }
 
    #endregion
 
    public Unit.Teams whosTurn;
    public List<Unit.Teams> teamsOnGame = new List<Unit.Teams>();
-   public int masterTurn = 0;
+   public int masterTurn;
    public bool canMove;
+
+   Player player, player2, player3, player4;
+   public bool buttonPressed = false;
+   public Unit.Types unitToPlace = Unit.Types.Empty;
+
+   [SerializeField]
+   GameObject selectionButtons;
 
    public Tile[,] tiles;
    public Dictionary<Tile, AttackingUnitDisplay> displayTiles = new Dictionary<Tile, AttackingUnitDisplay>();
@@ -36,6 +47,8 @@ public class GameManager : MonoBehaviour
    [SerializeField] GameObject displayTilesContainer;
    [SerializeField] GameObject highlightTile;
    [SerializeField] GameObject highlightTilesContainer;
+
+   [SerializeField] TextMeshProUGUI textMesh;
 
    public int width;
    public int height;
@@ -54,28 +67,35 @@ public class GameManager : MonoBehaviour
       tempUnit.team = Unit.Teams.Red;
       tempUnit.type = Unit.Types.Castle;
       tempUnit.size = 50;
+      tempUnit.isMoved = false;
       tiles[3, 15].unit = tempUnit;
       CreateDisplay(tiles[3, 15], tempUnit);
 
       tempUnit.team = Unit.Teams.Blue;
       tempUnit.type = Unit.Types.Castle;
       tempUnit.size = 50;
+      tempUnit.isMoved = false;
       tiles[3, 2].unit = tempUnit;
       CreateDisplay(tiles[3, 2], tempUnit);
 
       tempUnit.team = Unit.Teams.Green;
       tempUnit.type = Unit.Types.Castle;
       tempUnit.size = 50;
-      tiles[28, 15].unit = tempUnit;
-      CreateDisplay(tiles[28, 15], tempUnit);
+      tempUnit.isMoved = false;
+      tiles[24, 15].unit = tempUnit;
+      CreateDisplay(tiles[24, 15], tempUnit);
 
       tempUnit.team = Unit.Teams.Yellow;
       tempUnit.type = Unit.Types.Castle;
       tempUnit.size = 50;
-      tiles[28, 2].unit = tempUnit;
-      CreateDisplay(tiles[28, 2], tempUnit);
+      tempUnit.isMoved = false;
+      tiles[24, 2].unit = tempUnit;
+      CreateDisplay(tiles[24, 2], tempUnit);
       #endregion
-
+      player = GameObject.Find("Player").GetComponent<Player>();
+      player2 = GameObject.Find("Player2").GetComponent<Player>();
+      player3 = GameObject.Find("Player3").GetComponent<Player>();
+      player4 = GameObject.Find("Player4").GetComponent<Player>();
    }
 
    /// <summary>
@@ -183,6 +203,7 @@ public class GameManager : MonoBehaviour
             {
                whosTurn = Unit.Teams.Yellow;
             }
+            player.isRoundStarted = true;
             break;
          case Unit.Teams.Blue:
             if (teamsOnGame.Contains(Unit.Teams.Green))
@@ -198,6 +219,7 @@ public class GameManager : MonoBehaviour
                whosTurn = Unit.Teams.Red;
                masterTurn += 1;
             }
+            player2.isRoundStarted = true;
             break;
          case Unit.Teams.Green:
             if (teamsOnGame.Contains(Unit.Teams.Yellow))
@@ -213,6 +235,7 @@ public class GameManager : MonoBehaviour
             {
                whosTurn = Unit.Teams.Blue;
             }
+            player3.isRoundStarted = true;
             break;
          case Unit.Teams.Yellow:
             if (teamsOnGame.Contains(Unit.Teams.Red))
@@ -228,9 +251,11 @@ public class GameManager : MonoBehaviour
             {
                whosTurn = Unit.Teams.Green;
             }
+            player4.isRoundStarted = true;
             break;
       }
       canMove = true;
+      textMesh.text = "Turn: " + whosTurn;
    }
 
    /// <summary>
@@ -245,6 +270,10 @@ public class GameManager : MonoBehaviour
       tile.unit.size -= damage;
 
       int attackerDisplayText = int.Parse(attackerDisplay.textMesh.text);
+      if (attackerDisplayText - damage <= 0)
+      {
+         tile.unit.type = Unit.Types.Empty;
+      }
       attackerDisplayText -= damage;
       attackerDisplay.textMesh.text = attackerDisplayText.ToString();
    }
@@ -269,6 +298,90 @@ public class GameManager : MonoBehaviour
          displayTiles.Remove(tile);
          Destroy(displayUnit.gameObject);
       }
+   }
+
+   public void OnClickSelectUnitToPlace()
+   {
+      // get game object tag
+      string tag = UnityEngine.EventSystems.EventSystem.current.currentSelectedGameObject.tag;
+
+      if (tag == "Warrior")
+      {
+         unitToPlace = Unit.Types.Warrior;
+      }
+      else if (tag == "Archer")
+      {
+         unitToPlace = Unit.Types.Archer;
+      }
+      else if (tag == "Cavalry")
+      {
+         unitToPlace = Unit.Types.Cavalry;
+      }
+      else if (tag == "Knight")
+      {
+         unitToPlace = Unit.Types.Knight;
+      }
+      else if (tag == "Assassin")
+      {
+         unitToPlace = Unit.Types.Assassin;
+      }
+      buttonPressed = true;
+      selectionButtons.SetActive(false);
+   }
+
+   public bool IsAllTilesInTeamMoved(Unit.Teams team)
+   {
+      foreach (var tile in tiles)
+      {
+         if (tile.unit.team == team && tile.unit.type != Unit.Types.Castle && tile.unit.isMoved == false)
+         {
+            Debug.Log("HEREEEEEEEEEEEEEEEEEEE");
+
+            return false;
+         }
+      }
+      foreach (var tile in tiles)
+      {
+         if (tile.unit.team == team && tile.unit.type != Unit.Types.Castle && tile.unit.isMoved == true)
+         {
+            tile.unit.isMoved = false;
+         }
+      }
+      return true;
+   }
+
+   public void OnClickFinishRound()
+   {
+      if (whosTurn == Unit.Teams.Red)
+      {
+         player.isRoundStarted = true;
+         GameManager.Instance.RemoveHighlightTile();
+         GameManager.Instance.NextTurn();
+      }
+      else if (whosTurn == Unit.Teams.Blue)
+      {
+         player2.isRoundStarted = true;
+         GameManager.Instance.RemoveHighlightTile();
+         GameManager.Instance.NextTurn();
+      }
+      else if (whosTurn == Unit.Teams.Green)
+      {
+         player3.isRoundStarted = true;
+         GameManager.Instance.RemoveHighlightTile();
+         GameManager.Instance.NextTurn();
+      }
+      else if (whosTurn == Unit.Teams.Yellow)
+      {
+         player4.isRoundStarted = true;
+         GameManager.Instance.RemoveHighlightTile();
+         GameManager.Instance.NextTurn();
+      }
+      RemoveHighlightTile();
+
+   }
+   public void OnClickMainMenu()
+   {
+      UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
    }
 }
 

@@ -219,17 +219,28 @@ public class Tile : MonoBehaviour
       to.unit.team = display.unit.team;
       to.unit.type = display.unit.type;
       to.unit.size = display.unit.size;
+      to.unit.isMoved = true;
 
       player.selectedTile = null;
       player2.selectedTile = null;
       player3.selectedTile = null;
       player4.selectedTile = null;
-      GameManager.Instance.NextTurn();
+
+      if (GameManager.Instance.IsAllTilesInTeamMoved(to.unit.team))
+      {
+         GameManager.Instance.NextTurn();
+      }
+      GameManager.Instance.canMove = true;
    }
 
-   
+
+
    void OnMouseEnter()
    {
+      if (!GameManager.Instance.highlightTiles.ContainsKey(this))
+      {
+         GameManager.Instance.CreateHighlightTile(this);
+      }
       if (GameManager.Instance.whosTurn == player.team)
       {
          player.tileOnMouseOver = this;
@@ -246,22 +257,22 @@ public class Tile : MonoBehaviour
       {
          player4.tileOnMouseOver = this;
       }
-      if (GameManager.Instance.whosTurn == Unit.Teams.Red && player.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
-      {
-         GameManager.Instance.CreateHighlightTile(this);
-      }
-      else if (GameManager.Instance.whosTurn == Unit.Teams.Blue && player2.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
-      {
-         GameManager.Instance.CreateHighlightTile(this);
-      }
-      else if (GameManager.Instance.whosTurn == Unit.Teams.Green && player3.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
-      {
-         GameManager.Instance.CreateHighlightTile(this);
-      }
-      else if (GameManager.Instance.whosTurn == Unit.Teams.Yellow && player4.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
-      {
-         GameManager.Instance.CreateHighlightTile(this);
-      }
+      // if (GameManager.Instance.whosTurn == Unit.Teams.Red && player.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
+      // {
+      //    GameManager.Instance.CreateHighlightTile(this);
+      // }
+      // else if (GameManager.Instance.whosTurn == Unit.Teams.Blue && player2.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
+      // {
+      //    GameManager.Instance.CreateHighlightTile(this);
+      // }
+      // else if (GameManager.Instance.whosTurn == Unit.Teams.Green && player3.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
+      // {
+      //    GameManager.Instance.CreateHighlightTile(this);
+      // }
+      // else if (GameManager.Instance.whosTurn == Unit.Teams.Yellow && player4.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
+      // {
+      //    GameManager.Instance.CreateHighlightTile(this);
+      // }
    }
 
    void OnMouseOver()
@@ -275,23 +286,26 @@ public class Tile : MonoBehaviour
       player2.tileOnMouseOver = null;
       player3.tileOnMouseOver = null;
       player4.tileOnMouseOver = null;
-
-      if (GameManager.Instance.whosTurn == Unit.Teams.Red && player.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
+      if (GameManager.Instance.highlightTiles.ContainsKey(this))
       {
          GameManager.Instance.RemoveHighlightTile(this);
       }
-      else if (GameManager.Instance.whosTurn == Unit.Teams.Blue && player2.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
-      {
-         GameManager.Instance.RemoveHighlightTile(this);
-      }
-      else if (GameManager.Instance.whosTurn == Unit.Teams.Green && player3.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
-      {
-         GameManager.Instance.RemoveHighlightTile(this);
-      }
-      else if (GameManager.Instance.whosTurn == Unit.Teams.Yellow && player4.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
-      {
-         GameManager.Instance.RemoveHighlightTile(this);
-      }
+      // if (GameManager.Instance.whosTurn == Unit.Teams.Red && player.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
+      // {
+      //    GameManager.Instance.RemoveHighlightTile(this);
+      // }
+      // else if (GameManager.Instance.whosTurn == Unit.Teams.Blue && player2.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
+      // {
+      //    GameManager.Instance.RemoveHighlightTile(this);
+      // }
+      // else if (GameManager.Instance.whosTurn == Unit.Teams.Green && player3.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
+      // {
+      //    GameManager.Instance.RemoveHighlightTile(this);
+      // }
+      // else if (GameManager.Instance.whosTurn == Unit.Teams.Yellow && player4.selectedTile == null && GameManager.Instance.highlightTiles.Count > 0)
+      // {
+      //    GameManager.Instance.RemoveHighlightTile(this);
+      // }
    }
 }
 
@@ -318,7 +332,7 @@ public struct Unit
       Yellow,
    }
 
-
+   public bool isMoved;
    public Types type;
 
    public Teams team;
