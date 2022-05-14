@@ -26,8 +26,8 @@ public class Tile : MonoBehaviour
    {
       player = GameObject.Find("Player").GetComponent<Player>();
       player2 = GameObject.Find("Player2").GetComponent<Player>();
-      player3 = GameObject.Find("Player3").GetComponent<Player>();
-      player4 = GameObject.Find("Player4").GetComponent<Player>();
+      // player3 = GameObject.Find("Player3").GetComponent<Player>();
+      // player4 = GameObject.Find("Player4").GetComponent<Player>();
    }
 
 
@@ -39,6 +39,11 @@ public class Tile : MonoBehaviour
    public float DistanceTo(Tile to)
    {
       return Mathf.Max(Mathf.Abs(x - to.x), Mathf.Abs(y - to.y), Mathf.Abs(z - to.z));
+   }
+
+   public int DistanceToTileByColAndRow(Tile to)
+   {
+      return Mathf.Max(Mathf.Abs(col - to.col), Mathf.Abs(row - to.row));
    }
 
    /// <summary>
@@ -97,6 +102,17 @@ public class Tile : MonoBehaviour
          }
       }
       return realTempList;
+   }
+
+   // find closest tile of this tile to a given tile with a given range
+   public Tile Closest(Tile to, int range)
+   {
+      List<Tile> tempList = new List<Tile>();
+      tempList = Range(range);
+      tempList.Remove(this);
+      tempList.Remove(to);
+      tempList.Sort((x, y) => x.DistanceTo(to).CompareTo(y.DistanceTo(to)));
+      return tempList[0];
    }
 
    /// <summary>
@@ -223,13 +239,10 @@ public class Tile : MonoBehaviour
 
       player.selectedTile = null;
       player2.selectedTile = null;
-      player3.selectedTile = null;
-      player4.selectedTile = null;
+      // player3.selectedTile = null;
+      // player4.selectedTile = null;
 
-      if (GameManager.Instance.IsAllTilesInTeamMoved(to.unit.team))
-      {
-         GameManager.Instance.NextTurn();
-      }
+
       GameManager.Instance.canMove = true;
    }
 
@@ -249,14 +262,14 @@ public class Tile : MonoBehaviour
       {
          player2.tileOnMouseOver = this;
       }
-      else if (GameManager.Instance.whosTurn == player3.team)
-      {
-         player3.tileOnMouseOver = this;
-      }
-      else if (GameManager.Instance.whosTurn == player4.team)
-      {
-         player4.tileOnMouseOver = this;
-      }
+      // else if (GameManager.Instance.whosTurn == player3.team)
+      // {
+      //    player3.tileOnMouseOver = this;
+      // }
+      // else if (GameManager.Instance.whosTurn == player4.team)
+      // {
+      //    player4.tileOnMouseOver = this;
+      // }
       // if (GameManager.Instance.whosTurn == Unit.Teams.Red && player.selectedTile == null && !GameManager.Instance.highlightTiles.ContainsKey(this))
       // {
       //    GameManager.Instance.CreateHighlightTile(this);
@@ -284,8 +297,8 @@ public class Tile : MonoBehaviour
    {
       player.tileOnMouseOver = null;
       player2.tileOnMouseOver = null;
-      player3.tileOnMouseOver = null;
-      player4.tileOnMouseOver = null;
+      // player3.tileOnMouseOver = null;
+      // player4.tileOnMouseOver = null;
       if (GameManager.Instance.highlightTiles.ContainsKey(this))
       {
          GameManager.Instance.RemoveHighlightTile(this);

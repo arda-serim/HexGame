@@ -6,7 +6,7 @@ using TMPro;
 public class Player : MonoBehaviour
 {
    public Unit.Teams team;
-   Tile castleTile;
+   public Tile castleTile;
    Camera myCamera;
 
    [SerializeField]
@@ -42,29 +42,28 @@ public class Player : MonoBehaviour
       if (!GameManager.Instance.canMove || GameManager.Instance.whosTurn != team)
          return;
 
-
       if (isRoundStarted)
       {
          credits += 8 + (GameManager.Instance.masterTurn / 15 + 2) * GameManager.Instance.masterTurn / 5;
          isRoundStarted = false;
       }
-      textMesh.text = credits.ToString();
-      if (team == Unit.Teams.Red)
-      {
-         castleTile = GameManager.Instance.tiles[3, 15];
-      }
-      else if (team == Unit.Teams.Blue)
-      {
-         castleTile = GameManager.Instance.tiles[3, 2];
-      }
-      else if (team == Unit.Teams.Green)
-      {
-         castleTile = GameManager.Instance.tiles[24, 15];
-      }
-      else if (team == Unit.Teams.Yellow)
-      {
-         castleTile = GameManager.Instance.tiles[24, 2];
-      }
+      textMesh.text = team.ToString() + ": " + credits.ToString() + " Credits";
+      // if (team == Unit.Teams.Red)
+      // {
+      //    castleTile = GameManager.Instance.tiles[3, 15];
+      // }
+      // else if (team == Unit.Teams.Blue)
+      // {
+      //    castleTile = GameManager.Instance.tiles[3, 2];
+      // }
+      // else if (team == Unit.Teams.Green)
+      // {
+      //    castleTile = GameManager.Instance.tiles[24, 15];
+      // }
+      // else if (team == Unit.Teams.Yellow)
+      // {
+      //    castleTile = GameManager.Instance.tiles[24, 2];
+      // }
       try
       {
          if (Input.GetKeyDown(KeyCode.Mouse0) && tileOnMouseOver == selectedTile)
@@ -130,29 +129,51 @@ public class Player : MonoBehaviour
                   if (tileOnMouseOver.unit.type == Unit.Types.Empty)
                   {
                      GameManager.Instance.RemoveHighlightTile();
+
                      StartCoroutine(selectedTile.GoTo(tileOnMouseOver));
+
                   }
                   else if (team != tileOnMouseOver.unit.team && tileOnMouseOver.unit.team != Unit.Teams.Universal)
                   {
                      int maxDamage;
-                     if (selectedTile.unit.type == Unit.Types.Warrior && selectedTile.InRange(tileOnMouseOver, 1))
+                     if (selectedTile.unit.type == Unit.Types.Warrior && selectedTile.InRange(tileOnMouseOver, 3))
                      {
+                        if (selectedTile.DistanceTo(tileOnMouseOver) >= 2)
+                        {
+                           StartCoroutine(selectedTile.GoTo(selectedTile.Closest(tileOnMouseOver, selectedTile.DistanceToTileByColAndRow(tileOnMouseOver) - 1)));
+                        }
                         maxDamage = 8;
                      }
-                     else if (selectedTile.unit.type == Unit.Types.Archer && selectedTile.InRange(tileOnMouseOver, 3))
+                     else if (selectedTile.unit.type == Unit.Types.Archer && selectedTile.InRange(tileOnMouseOver, 4))
                      {
+                        if (selectedTile.DistanceTo(tileOnMouseOver) >= 3)
+                        {
+                           StartCoroutine(selectedTile.GoTo(selectedTile.Closest(tileOnMouseOver, selectedTile.DistanceToTileByColAndRow(tileOnMouseOver) - 2)));
+                        }
                         maxDamage = 6;
                      }
-                     else if (selectedTile.unit.type == Unit.Types.Cavalry && selectedTile.InRange(tileOnMouseOver, 1))
+                     else if (selectedTile.unit.type == Unit.Types.Cavalry && selectedTile.InRange(tileOnMouseOver, 5))
                      {
+                        if (selectedTile.DistanceTo(tileOnMouseOver) >= 2)
+                        {
+                           StartCoroutine(selectedTile.GoTo(selectedTile.Closest(tileOnMouseOver, selectedTile.DistanceToTileByColAndRow(tileOnMouseOver) - 1)));
+                        }
                         maxDamage = 8;
                      }
-                     else if (selectedTile.unit.type == Unit.Types.Knight && selectedTile.InRange(tileOnMouseOver, 1))
+                     else if (selectedTile.unit.type == Unit.Types.Knight && selectedTile.InRange(tileOnMouseOver, 2))
                      {
+                        if (selectedTile.DistanceTo(tileOnMouseOver) >= 2)
+                        {
+                           StartCoroutine(selectedTile.GoTo(selectedTile.Closest(tileOnMouseOver, selectedTile.DistanceToTileByColAndRow(tileOnMouseOver) - 1)));
+                        }
                         maxDamage = 8;
                      }
-                     else if (selectedTile.unit.type == Unit.Types.Assassin && selectedTile.InRange(tileOnMouseOver, 2))
+                     else if (selectedTile.unit.type == Unit.Types.Assassin && selectedTile.InRange(tileOnMouseOver, 6))
                      {
+                        if (selectedTile.DistanceTo(tileOnMouseOver) >= 3)
+                        {
+                           StartCoroutine(selectedTile.GoTo(selectedTile.Closest(tileOnMouseOver, selectedTile.DistanceToTileByColAndRow(tileOnMouseOver) - 2)));
+                        }
                         maxDamage = 12;
                      }
                      else
@@ -164,13 +185,6 @@ public class Player : MonoBehaviour
                         GameManager.Instance.RemoveHighlightTile();
                         GameManager.Instance.Attack(maxDamage, tileOnMouseOver);
                         selectedTile.unit.isMoved = true;
-
-                        if (GameManager.Instance.IsAllTilesInTeamMoved(team))
-                        {
-                           isRoundStarted = true;
-                           isPlacing = true;
-                           GameManager.Instance.NextTurn();
-                        }
                      }
 
                   }

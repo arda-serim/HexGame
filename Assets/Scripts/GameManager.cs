@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -22,7 +23,8 @@ public class GameManager : MonoBehaviour
       tiles = new Tile[width, height];
 
       masterTurn = 1;
-
+      selectionButtons.SetActive(false);
+      winnerText.gameObject.SetActive(false);
    }
 
    #endregion
@@ -38,6 +40,8 @@ public class GameManager : MonoBehaviour
 
    [SerializeField]
    GameObject selectionButtons;
+   [SerializeField]
+   TextMeshProUGUI masterTurnText;
 
    public Tile[,] tiles;
    public Dictionary<Tile, AttackingUnitDisplay> displayTiles = new Dictionary<Tile, AttackingUnitDisplay>();
@@ -49,9 +53,25 @@ public class GameManager : MonoBehaviour
    [SerializeField] GameObject highlightTilesContainer;
 
    [SerializeField] TextMeshProUGUI textMesh;
+   [SerializeField] TextMeshProUGUI winnerText;
 
    public int width;
    public int height;
+
+   private void Update()
+   {
+      masterTurnText.text = "Turn:" + masterTurn.ToString();
+      if (IsGameEnded())
+      {
+         if (Input.GetKeyDown(KeyCode.Space))
+         {
+            SceneManager.LoadScene(0);
+         }
+      }
+
+
+   }
+
 
    /// <summary>
    /// Will start the game by placing all castle and required attacking units
@@ -66,36 +86,39 @@ public class GameManager : MonoBehaviour
       #region Castles
       tempUnit.team = Unit.Teams.Red;
       tempUnit.type = Unit.Types.Castle;
-      tempUnit.size = 50;
+      tempUnit.size = 20;
       tempUnit.isMoved = false;
-      tiles[3, 15].unit = tempUnit;
-      CreateDisplay(tiles[3, 15], tempUnit);
+      tiles[2, 5].unit = tempUnit;
+      CreateDisplay(tiles[2, 5], tempUnit);
 
       tempUnit.team = Unit.Teams.Blue;
       tempUnit.type = Unit.Types.Castle;
-      tempUnit.size = 50;
+      tempUnit.size = 20;
       tempUnit.isMoved = false;
-      tiles[3, 2].unit = tempUnit;
-      CreateDisplay(tiles[3, 2], tempUnit);
+      tiles[17, 5].unit = tempUnit;
+      CreateDisplay(tiles[17, 5], tempUnit);
 
-      tempUnit.team = Unit.Teams.Green;
-      tempUnit.type = Unit.Types.Castle;
-      tempUnit.size = 50;
-      tempUnit.isMoved = false;
-      tiles[24, 15].unit = tempUnit;
-      CreateDisplay(tiles[24, 15], tempUnit);
+      // tempUnit.team = Unit.Teams.Green;
+      // tempUnit.type = Unit.Types.Castle;
+      // tempUnit.size = 20;
+      // tempUnit.isMoved = false;
+      // tiles[24, 15].unit = tempUnit;
+      // CreateDisplay(tiles[24, 15], tempUnit);
 
-      tempUnit.team = Unit.Teams.Yellow;
-      tempUnit.type = Unit.Types.Castle;
-      tempUnit.size = 50;
-      tempUnit.isMoved = false;
-      tiles[24, 2].unit = tempUnit;
-      CreateDisplay(tiles[24, 2], tempUnit);
+      // tempUnit.team = Unit.Teams.Yellow;
+      // tempUnit.type = Unit.Types.Castle;
+      // tempUnit.size = 20;
+      // tempUnit.isMoved = false;
+      // tiles[24, 2].unit = tempUnit;
+      // CreateDisplay(tiles[24, 2], tempUnit);
       #endregion
       player = GameObject.Find("Player").GetComponent<Player>();
       player2 = GameObject.Find("Player2").GetComponent<Player>();
-      player3 = GameObject.Find("Player3").GetComponent<Player>();
-      player4 = GameObject.Find("Player4").GetComponent<Player>();
+      // player3 = GameObject.Find("Player3").GetComponent<Player>();
+      // player4 = GameObject.Find("Player4").GetComponent<Player>();
+
+      player.castleTile = tiles[2, 5];
+      player2.castleTile = tiles[17, 5];
    }
 
    /// <summary>
@@ -183,6 +206,20 @@ public class GameManager : MonoBehaviour
 
    }
 
+   // make all tiles in team not is moved
+   public void ResetTiles()
+   {
+      foreach (var tile in tiles)
+      {
+         if (tile.unit.type != Unit.Types.Empty)
+         {
+            tile.unit.isMoved = false;
+         }
+      }
+   }
+
+
+
    /// <summary>
    /// Change whosTurn based on which colors are playing and which are not
    /// </summary>
@@ -254,6 +291,7 @@ public class GameManager : MonoBehaviour
             player4.isRoundStarted = true;
             break;
       }
+      ResetTiles();
       canMove = true;
       textMesh.text = "Turn: " + whosTurn;
    }
@@ -329,26 +367,20 @@ public class GameManager : MonoBehaviour
       selectionButtons.SetActive(false);
    }
 
-   public bool IsAllTilesInTeamMoved(Unit.Teams team)
-   {
-      foreach (var tile in tiles)
-      {
-         if (tile.unit.team == team && tile.unit.type != Unit.Types.Castle && tile.unit.isMoved == false)
-         {
-            Debug.Log("HEREEEEEEEEEEEEEEEEEEE");
 
-            return false;
-         }
-      }
-      foreach (var tile in tiles)
+   public bool CheckIfUnitExists(Unit.Teams team)
+   {
+      foreach (var item in tiles)
       {
-         if (tile.unit.team == team && tile.unit.type != Unit.Types.Castle && tile.unit.isMoved == true)
+         if (item.unit.team == team && item.unit.type != Unit.Types.Castle)
          {
-            tile.unit.isMoved = false;
+            Debug.Log("heree");
+            return true;
          }
       }
-      return true;
+      return false;
    }
+
 
    public void OnClickFinishRound()
    {
@@ -382,6 +414,39 @@ public class GameManager : MonoBehaviour
    public void OnClickMainMenu()
    {
       UnityEngine.SceneManagement.SceneManager.LoadScene("MainMenu");
+   }
+
+   // check if only one player remained
+   public bool IsGameEnded()
+   {
+      Unit.Teams team = Unit.Teams.Universal;
+      if (player.castleTile.unit.type == Unit.Types.Empty)
+      {
+         team = player.team;
+      }
+      else if (player2.castleTile.unit.type == Unit.Types.Empty)
+      {
+         team = player2.team;
+      }
+      // else if (player3.castleTile.unit.type == Unit.Types.Empty) {
+
+      // }
+      // else if (player4.castleTile.unit.type == Unit.Types.Empty) {
+
+      // }
+
+      if (team != Unit.Teams.Universal)
+      {
+         GameManager.Instance.EndGame(team);
+         return true;
+      }
+      return false;
+   }
+
+   public void EndGame(Unit.Teams team)
+   {
+      winnerText.text = team.ToString() + "Win\nPress Space to go back to main menu";
+      winnerText.gameObject.SetActive(true);
    }
 }
 
